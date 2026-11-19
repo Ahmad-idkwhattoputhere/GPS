@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPS Lab — Inside Satellite Navigation</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-mark">G</span>
+      <span>
+        <strong>GPS LAB</strong>
+        <small>INSIDE SATELLITE NAVIGATION</small>
+      </span>
+    </a>
+    <div class="top-status"><span></span> SIMULATION ONLINE</div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">INTERACTIVE SCIENCE EXPERIENCE</div>
+        <h1>How does GPS<br><span>find your position?</span></h1>
+        <p>Explore how satellites measure distance, correct clock errors and work together to locate a receiver.</p>
+      </div>
+      <div class="hero-note">
+        <span class="note-icon">✳</span>
+        <div><strong>YOUR MISSION</strong><small>Move the receiver. Change the signals. Discover how positioning works.</small></div>
+      </div>
+    </section>
+
+    <section class="experiment-layout">
+      <div class="map-panel panel">
+        <div class="panel-top">
+          <div>
+            <div class="section-kicker">LIVE SIMULATION</div>
+            <h2>Satellite positioning map</h2>
+            <p>Drag the white receiver or click anywhere on the grid.</p>
+          </div>
+          <span class="live-pill"><i></i> LIVE</span>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="gpsCanvas" aria-label="Interactive GPS satellite positioning map"></canvas>
+          <div class="map-hint"><span>↖</span> DRAG RECEIVER TO MOVE</div>
+        </div>
+
+        <div class="legend">
+          <span><i class="legend-satellite"></i> Satellite</span>
+          <span><i class="legend-actual"></i> Actual receiver</span>
+          <span><i class="legend-estimate"></i> GPS estimate</span>
+          <span><i class="legend-range"></i> Measured range</span>
+        </div>
+
+        <div class="map-footer">
+          <span>MODEL COORDINATES</span>
+          <span id="receiverCoords">X: 500 · Y: 450</span>
+        </div>
+      </div>
+
+      <aside class="side-panel panel">
+        <div class="section-kicker">CONTROL CENTRE</div>
+        <h2>Experiment controls</h2>
+        <p class="side-intro">Change the conditions and observe how GPS responds.</p>
+
+        <div class="control-block">
+          <div class="control-heading">
+            <label for="clockBias">Receiver clock bias</label>
+            <strong id="clockValue">0 m</strong>
+          </div>
+          <input id="clockBias" type="range" min="-1000" max="1000" value="0" step="10">
+          <div class="range-ends"><span>−1000 m</span><span>+1000 m</span></div>
+          <p>A timing error in the receiver's clock affects every measured distance.</p>
+        </div>
+
+        <div class="control-block">
+          <div class="control-heading">
+            <label for="noise">Signal measurement noise</label>
+            <strong id="noiseValue">0 m</strong>
+          </div>
+          <input id="noise" type="range" min="0" max="100" value="0" step="1">
+          <div class="range-ends"><span>0 m</span><span>100 m</span></div>
+          <p>Simulates inaccuracies in the satellite distance measurements.</p>
+        </div>
+
+        <div class="control-block">
+          <div class="control-heading">
+            <label>Display range circles</label>
+            <span class="toggle-label" id="rangeToggleLabel">ON</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="showRanges" checked>
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <div class="preset-area">
+          <div class="preset-title">QUICK EXPERIMENTS</div>
+          <button class="preset-button" data-preset="perfect"><span>01</span><span><b>Perfect conditions</b><small>No clock error or signal noise</small></span><i>↗</i></button>
+          <button class="preset-button" data-preset="clock"><span>02</span><span><b>Clock error</b><small>Introduce a 500 m timing bias</small></span><i>↗</i></button>
+          <button class="preset-button" data-preset="noise"><span>03</span><span><b>Noisy signals</b><small>Introduce 80 m of measurement noise</small></span><i>↗</i></button>
+          <button class="reset-button" id="resetButton">↺ &nbsp; Reset experiment</button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card panel">
+        <span>ESTIMATED X POSITION</span>
+        <strong id="xResult">500.00 <small>km</small></strong>
+        <small class="stat-foot">Horizontal coordinate</small>
+      </article>
+      <article class="stat-card panel">
+        <span>ESTIMATED Y POSITION</span>
+        <strong id="yResult">450.00 <small>km</small></strong>
+        <small class="stat-foot">Vertical coordinate</small>
+      </article>
+      <article class="stat-card panel">
+        <span>ESTIMATED CLOCK BIAS</span>
+        <strong id="biasResult">0.00 <small>m</small></strong>
+        <small class="stat-foot">Receiver timing correction</small>
+      </article>
+      <article class="stat-card panel">
+        <span>POSITION ERROR</span>
+        <strong id="errorResult">0.000 <small>km</small></strong>
+        <small class="stat-foot">Difference from actual position</small>
+      </article>
+    </section>
+
+    <section class="learning-grid">
+      <article class="learning-card panel">
+        <div class="section-kicker">UNDERSTAND THE SCIENCE</div>
+        <h2>How does GPS work?</h2>
+        <p>GPS satellites transmit signals containing the time they were sent. A receiver compares that time with when the signal arrives to estimate how far away each satellite is.</p>
+        <div class="equation">Measured distance = True distance + Clock error + Measurement error</div>
+        <p>Each distance creates a possible circle around a satellite. Combining measurements lets the receiver estimate its location. In this 2D model, four satellites help estimate two coordinates and one clock-bias value.</p>
+      </article>
+
+      <article class="learning-card panel">
+        <div class="section-kicker">YOUR CHALLENGE</div>
+        <h2>Can you locate the receiver?</h2>
+        <ol class="challenge-list">
+          <li><span>01</span> Set both error sliders to zero.</li>
+          <li><span>02</span> Move the white receiver to a new location.</li>
+          <li><span>03</span> Observe how the orange estimate follows.</li>
+          <li><span>04</span> Add clock bias and noise. Compare the error.</li>
+        </ol>
+        <div class="challenge-tip">TIP: The orange dot is the position calculated from the satellite measurements.</div>
+      </article>
+    </section>
+
+    <footer>GPS LAB <span>·</span> AN EDUCATIONAL 2D SIMULATION</footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
